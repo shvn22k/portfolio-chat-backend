@@ -26,15 +26,13 @@ logger = logging.getLogger(__name__)
 
 GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
 genai.configure(api_key=GOOGLE_API_KEY)
-KB_FILE_PATH = r"data\resume.pdf"
+KB_FILE_PATH = "data/resume.pdf"
 
-# Initialize these at module level
 vector_index = None
 
 def initialize_knowledge_base():
     global vector_index
     try:
-        # Load the PDF and split it into chunks
         logger.info(f"Loading PDF from {KB_FILE_PATH}")
         pdf_loader = PyPDFLoader(KB_FILE_PATH)
         pages = pdf_loader.load_and_split()
@@ -42,14 +40,12 @@ def initialize_knowledge_base():
         context = "\n\n".join(str(page.page_content) for page in pages)
         texts = text_splitter.split_text(context)
         
-        # Initialize embeddings
         logger.info("Creating embeddings...")
         embeddings = GoogleGenerativeAIEmbeddings(
             model="models/embedding-001",
             google_api_key=GOOGLE_API_KEY
         )
         
-        # Create vector store
         vector_index = Chroma.from_texts(texts, embeddings).as_retriever(search_kwargs={"k": 5})
         logger.info("Knowledge base loaded successfully")
         return True
@@ -62,7 +58,7 @@ router = APIRouter(
     tags=['Chatbot']
 )
 
-# Initialize on startup
+
 initialize_knowledge_base()
 
 def format_markdown_response(text: str) -> str:
@@ -70,34 +66,34 @@ def format_markdown_response(text: str) -> str:
     Converts markdown text into a well-formatted readable response.
     Handles bullet points, headings, and general text formatting.
     """
-    # Remove any HTML tags if present
+
     text = re.sub(r'<[^>]+>', '', text)
     
-    # Format headings (# Heading -> Heading:)
+
     text = re.sub(r'^#+ (.+)$', r'\1:', text, flags=re.MULTILINE)
     
-    # Format bullet points
+
     text = re.sub(r'^\s*[-*]\s+(.+)$', r'• \1', text, flags=re.MULTILINE)
     
-    # Format numbered lists (1. Item -> • Item)
+
     text = re.sub(r'^\s*\d+\.\s+(.+)$', r'• \1', text, flags=re.MULTILINE)
     
-    # Add spacing around bullet points
+
     text = re.sub(r'• ', '\n• ', text)
     
-    # Format bold and italic text
-    text = re.sub(r'\*\*(.+?)\*\*', r'\1', text)  # Remove bold
-    text = re.sub(r'_(.+?)_', r'\1', text)        # Remove italic
+
+    text = re.sub(r'\*\*(.+?)\*\*', r'\1', text)  
+    text = re.sub(r'_(.+?)_', r'\1', text)        
     
-    # Clean up spacing
-    text = re.sub(r'\n{3,}', '\n\n', text)        # Remove extra newlines
-    text = re.sub(r':\s*', ': ', text)            # Clean up colons
-    text = re.sub(r'([.!?])\n• ', r'\1\n\n• ', text)  # Space after sentences
     
-    # Convert newlines to <br/> tags
+    text = re.sub(r'\n{3,}', '\n\n', text)        
+    text = re.sub(r':\s*', ': ', text)           
+    text = re.sub(r'([.!?])\n• ', r'\1\n\n• ', text)  
+    
+
     text = text.replace('\n', '<br/>')
     
-    # Final cleanup
+
     text = text.strip()
     
     return text
