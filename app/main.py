@@ -9,7 +9,7 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "http://localhost:3000",
-        "https://your-portfolio-name.vercel.app",  # Your Vercel URL after frontend deployment
+        "https://https://shiven-is-shiven.vercel.app/",  # Your actual Vercel URL
     ],
     allow_credentials=True,
     allow_methods=["*"],
