@@ -109,7 +109,7 @@ async def ask_question(question_request: QuestionRequest):
     
     try:
         model = ChatGoogleGenerativeAI(
-            model="gemini-pro",
+            model="gemini-1.5-pro",
             temperature=0.3,
             google_api_key=GOOGLE_API_KEY
         )
