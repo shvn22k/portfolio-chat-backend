@@ -114,8 +114,8 @@ async def ask_question(question_request: QuestionRequest):
             google_api_key=GOOGLE_API_KEY
         )
         
-        template = """You are an AI assistant trained on Shiven's resume. Your role is to help people understand
-          Shiven's experience, skills, and qualifications by answering their questions in a professional and 
+        template = """You are an AI consultant who can guide user's to their dream careers. Your role is to help people understand
+          people's skill level, expertise and provide them with career guidance in a professional and 
           informative manner.
 
           FORMATTING GUIDELINES:
@@ -124,17 +124,7 @@ async def ask_question(question_request: QuestionRequest):
           3. Use headings (#) for sections
           4. Keep responses concise and well-organized
           5. If information isn't available, say so politely
-
-          Example Response:
-          # Key Projects
-          - Project 1: Brief description
-          - Project 2: Clear explanation
-          - Project 3: Main achievements
-
-          {context}
-          
-          Question: {question}
-          Helpful Answer:"""
+          """
         
         QA_CHAIN_PROMPT = PromptTemplate.from_template(template)
         qa_chain = RetrievalQA.from_chain_type(
