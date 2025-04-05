@@ -1,7 +1,7 @@
 from contextlib import asynccontextmanager
 from fastapi import HTTPException, APIRouter, status
 from starlette import status
-from models import QuestionRequest
+from app.models import QuestionRequest
 
 from langchain_community.document_loaders import PyPDFLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
