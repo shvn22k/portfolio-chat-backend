@@ -26,30 +26,30 @@ logger = logging.getLogger(__name__)
 
 GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
 genai.configure(api_key=GOOGLE_API_KEY)
-KB_FILE_PATH = "../data/resume.pdf"
+KB_FILE_PATH = "data/resume.pdf"
 
 vector_index = None
 
 # Fallback responses for common questions
-FALLBACK_RESPONSES = {"Getting an error, please contact shiven to inform."}
+# FALLBACK_RESPONSES = {"Getting an error, please contact shiven to inform."}
 
-def get_fallback_response(query: str) -> Optional[str]:
-    """Try to match a query to predefined responses for when the AI service fails"""
-    # Normalize the query
-    query = query.lower().strip()
+# def get_fallback_response(query: str) -> Optional[str]:
+#     """Try to match a query to predefined responses for when the AI service fails"""
+#     # Normalize the query
+#     query = query.lower().strip()
     
-    # Check for exact matches first
-    if query in FALLBACK_RESPONSES:
-        return FALLBACK_RESPONSES[query]
+#     # Check for exact matches first
+#     if query in FALLBACK_RESPONSES:
+#         return FALLBACK_RESPONSES[query]
     
-    # Check for more specific partial matches (more strict matching)
-    for key, response in FALLBACK_RESPONSES.items():
-        # Match only if all words in the key appear in the query
-        key_words = key.lower().split()
-        if len(key_words) > 1 and all(word in query for word in key_words):
-            return response
+#     # Check for more specific partial matches (more strict matching)
+#     for key, response in FALLBACK_RESPONSES.items():
+#         # Match only if all words in the key appear in the query
+#         key_words = key.lower().split()
+#         if len(key_words) > 1 and all(word in query for word in key_words):
+#             return response
             
-    return None
+#     return None
 
 def initialize_knowledge_base():
     global vector_index
@@ -158,9 +158,9 @@ async def ask_question(question_request: QuestionRequest):
             error_msg = "Failed to initialize knowledge base. Check server logs for details."
             logger.error(error_msg)
             # Now try fallback response
-            fallback = get_fallback_response(question_request.question)
-            if fallback:
-                return {"answer": fallback}
+            # fallback = get_fallback_response(question_request.question)
+            # if fallback:
+            #     return {"answer": fallback}
             return {"answer": "I'm having trouble accessing my knowledge base at the moment. Please try again in a few moments while I get back online."}
     
     try:
@@ -219,9 +219,9 @@ async def ask_question(question_request: QuestionRequest):
         logger.error(f"Traceback: {traceback.format_exc()}")
         
         # Only use fallback response when the main system fails
-        fallback = get_fallback_response(question_request.question)
-        if fallback:
-            return {"answer": fallback}
+        # fallback = get_fallback_response(question_request.question)
+        # if fallback:
+        #     return {"answer": fallback}
             
         # Otherwise return generic message
         fallback_response = """I apologize, but I'm having trouble connecting to my knowledge database right now. 
